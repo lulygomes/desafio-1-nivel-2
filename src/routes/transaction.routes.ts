@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import TransactionsRepository from '../repositories/TransactionsRepository';
-// import CreateTransactionService from '../services/CreateTransactionService';
+import CreateTransactionService from '../services/CreateTransactionService';
 import Transaction from '../models/Transaction';
 
 const transactionRouter = Router();
@@ -22,9 +22,13 @@ transactionRouter.get('/', (request, response) => {
 transactionRouter.post('/', (request, response) => {
   try {
     const data  = request.body
-    const transactions = transactionsRepository.create(data)
+    const createTransaction = new CreateTransactionService(
+      transactionsRepository
+    )
 
-    return response.json(transactions)
+    const transaction = createTransaction.execute(data)
+
+    return response.json(transaction)
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
